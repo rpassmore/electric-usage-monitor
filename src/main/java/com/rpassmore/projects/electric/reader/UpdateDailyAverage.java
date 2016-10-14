@@ -1,9 +1,9 @@
 package com.rpassmore.projects.electric.reader;
 
-import com.rpassmore.projects.dto.DailyAverageElectric;
-import com.rpassmore.projects.dto.DailyAverageElectricRepository;
-import com.rpassmore.projects.dto.ElectricReading;
-import com.rpassmore.projects.dto.ElectricReadingRepository;
+import com.rpassmore.projects.data.entity.DailyAverageElectric;
+import com.rpassmore.projects.data.entity.ElectricReading;
+import com.rpassmore.projects.data.repo.DailyAverageElectricRepository;
+import com.rpassmore.projects.data.repo.ElectricReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

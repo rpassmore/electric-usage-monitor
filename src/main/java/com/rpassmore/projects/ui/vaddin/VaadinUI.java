@@ -1,101 +1,149 @@
 package com.rpassmore.projects.ui.vaddin;
 
-import com.rpassmore.projects.dto.Customer;
-import com.rpassmore.projects.dto.CustomerRepository;
+import com.rpassmore.projects.data.entity.ElectricReading;
+import com.rpassmore.projects.data.repo.ElectricReadingRepository;
+import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.ui.*;
+import org.dussan.vaadin.dcharts.DCharts;
+import org.dussan.vaadin.dcharts.base.elements.XYaxis;
+import org.dussan.vaadin.dcharts.base.elements.XYseries;
+import org.dussan.vaadin.dcharts.base.renderers.MarkerRenderer;
+import org.dussan.vaadin.dcharts.data.DataSeries;
+import org.dussan.vaadin.dcharts.metadata.XYaxes;
+import org.dussan.vaadin.dcharts.metadata.Yaxes;
+import org.dussan.vaadin.dcharts.metadata.styles.MarkerStyles;
+import org.dussan.vaadin.dcharts.options.Axes;
+import org.dussan.vaadin.dcharts.options.AxesDefaults;
+import org.dussan.vaadin.dcharts.options.Options;
+import org.dussan.vaadin.dcharts.options.Series;
+import org.dussan.vaadin.dcharts.renderers.axis.LinearAxisRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+
+import java.time.LocalDateTime;
 
 @SpringUI
 @Theme("valo")
 public class VaadinUI extends UI {
 
-	private final CustomerRepository repo;
-
-	private final CustomerEditor editor;
-
-	private final Grid grid;
-
-	private final TextField filter;
-
-	private final Button addNewBtn;
-
 	@Autowired
-	public VaadinUI(CustomerRepository repo, CustomerEditor editor) {
-		this.repo = repo;
-		this.editor = editor;
-		this.grid = new Grid();
-		this.filter = new TextField();
-		this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
-	}
+	private ElectricReadingRepository repo;
+
+	private final Label label = new Label("Reading history (hrs)");
+	private final Grid grid = new Grid();
+
+	private final Slider slider = new Slider(1, 72);
 
 	@Override
 	protected void init(VaadinRequest request) {
 		// build layout
-		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
-		VerticalLayout mainLayout = new VerticalLayout(actions, grid, editor);
+		HorizontalLayout actions = new HorizontalLayout(label, slider);
+		HorizontalLayout charts = new HorizontalLayout(makeChart());
+		slider.setValue(24.0);
+		slider.setImmediate(true);
+		slider.addValueChangeListener(e -> listReadings(slider.getMin(), slider.getValue()));
+    slider.setWidth(800, Unit.PIXELS);
+
+		VerticalLayout mainLayout = new VerticalLayout(actions, charts, grid);
 		setContent(mainLayout);
 
 		// Configure layouts and components
-		actions.setSpacing(true);
+		//actions.setSpacing(true);
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
+		mainLayout.setSizeFull();
 
-		grid.setHeight(300, Unit.PIXELS);
-		grid.setColumns("id", "firstName", "lastName");
-
-		filter.setInputPrompt("Filter by last name");
-
-		// Hook logic to components
-
-		// Replace listing with filtered content when user changes filter
-		filter.addTextChangeListener(e -> listCustomers(e.getText()));
-
-		// Connect selected Customer to editor or hide if none is selected
-		grid.addSelectionListener(e -> {
-			if (e.getSelected().isEmpty()) {
-				editor.setVisible(false);
-			}
-			else {
-				editor.editCustomer((Customer) grid.getSelectedRow());
-			}
-		});
-
-		// Instantiate and edit new Customer the new button is clicked
-		addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
-
-		// Listen changes made by the editor, refresh data from backend
-		editor.setChangeHandler(() -> {
-			editor.setVisible(false);
-			listCustomers(filter.getValue());
-		});
+		//grid.setHeight(300, Unit.PIXELS);
+		grid.setColumns("current", "voltage", "power", "readingDate");
+    grid.sort("readingDate", SortDirection.DESCENDING);
+    grid.setSizeFull();
 
 		// Initialize listing
-		listCustomers(null);
-	}
+    listReadings(slider.getMin(), slider.getMax());
+  }
 
 	// tag::listCustomers[]
-	private void listCustomers(String text) {
-		if (StringUtils.isEmpty(text)) {
-			grid.setContainerDataSource(
-					new BeanItemContainer(Customer.class, repo.findAll()));
-		}
-		else {
-			grid.setContainerDataSource(new BeanItemContainer(Customer.class,
-					repo.findByLastNameStartsWithIgnoreCase(text)));
-		}
+	private void listReadings(double startHours, double endHours) {
+		grid.setContainerDataSource(new BeanItemContainer(ElectricReading.class, repo.findByReadingDateBetween(LocalDateTime.now().minusHours((long) endHours), LocalDateTime.now().minusHours((long)startHours))));
 	}
 	// end::listCustomers[]
 
+	private DCharts makeChart() {
+		DataSeries dataSeries = new DataSeries();
+		dataSeries.newSeries();
+		for (float i = 0; i < 2 * Math.PI; i += 0.4) {
+			dataSeries.add(i, Math.cos(i));
+		}
+		dataSeries.newSeries();
+		for (float i = 0; i < 2 * Math.PI; i += 0.4) {
+			dataSeries.add(i, Math.sin(i - 0.8));
+		}
+		dataSeries.newSeries();
+		for (float i = 0; i < 2 * Math.PI; i += 0.4) {
+			dataSeries.add(i, 2.5 + Math.pow(i / 4, 2));
+		}
+		dataSeries.newSeries();
+		for (float i = 0; i < 2 * Math.PI; i += 0.4) {
+			dataSeries.add(i, -2.5 - Math.pow(i / 4, 2));
+		}
+
+		Series series = new Series()
+				.addSeries(
+						new XYseries()
+								.setLineWidth(2)
+								.setMarkerOptions(
+										new MarkerRenderer()
+												.setStyle(MarkerStyles.DIAMOND)))
+				.addSeries(
+						new XYseries(Yaxes.Y2).
+								setShowLine(false)
+								.setMarkerOptions(
+										new MarkerRenderer()
+												.setSize(7)
+												.setStyle(MarkerStyles.X)))
+				.addSeries(
+						new XYseries(Yaxes.Y3)
+								.setMarkerOptions(
+										new MarkerRenderer()
+												.setStyle(MarkerStyles.CIRCLE)))
+				.addSeries(
+						new XYseries(Yaxes.Y4)
+								.setLineWidth(5)
+								.setMarkerOptions(
+										new MarkerRenderer()
+												.setStyle(MarkerStyles.FILLED_SQUARE)
+												.setSize(10)));
+
+		AxesDefaults axesDefaults = new AxesDefaults()
+				.setUseSeriesColor(true)
+				.setRendererOptions(
+						new LinearAxisRenderer()
+								.setAlignTicks(true));
+
+		Axes axes = new Axes()
+				.addAxis(
+						new XYaxis(XYaxes.Y))
+				.addAxis(
+						new XYaxis(XYaxes.Y2))
+				.addAxis(
+						new XYaxis(XYaxes.Y3))
+				.addAxis(
+						new XYaxis(XYaxes.Y4));
+
+		Options options = new Options()
+				.setSeries(series)
+				.setAxesDefaults(axesDefaults)
+				.setAxes(axes);
+
+		DCharts chart = new DCharts()
+				.setDataSeries(dataSeries)
+				.setOptions(options)
+				.show();
+
+		return chart;
+	}
 }
