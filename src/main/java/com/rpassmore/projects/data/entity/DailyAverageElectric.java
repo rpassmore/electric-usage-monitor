@@ -1,4 +1,4 @@
-package com.rpassmore.projects.dto;
+package com.rpassmore.projects.data.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
