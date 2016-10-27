@@ -27,7 +27,7 @@ public class UpdateDailyAverage {
   @Scheduled(cron = "0 0 0 * * *")
   public void calculateDailyAverage() {
     //get all readings in the last 24hrs
-    List<ElectricReading> readings = electricReadingRepository.findByReadingDateBetween(LocalDateTime.now().minusHours(24), LocalDateTime.now());
+    List<ElectricReading> readings = electricReadingRepository.findByDateBetween(LocalDateTime.now().minusHours(24), LocalDateTime.now());
 
     //calculate daily averages
     double averageCurrent = readings.stream().mapToDouble(ElectricReading::getCurrent).average().getAsDouble();

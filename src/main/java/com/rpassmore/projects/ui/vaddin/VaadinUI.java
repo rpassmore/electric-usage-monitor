@@ -68,7 +68,7 @@ public class VaadinUI extends UI {
 
 	// tag::listCustomers[]
 	private void listReadings(double startHours, double endHours) {
-		grid.setContainerDataSource(new BeanItemContainer(ElectricReading.class, repo.findByReadingDateBetween(LocalDateTime.now().minusHours((long) endHours), LocalDateTime.now().minusHours((long)startHours))));
+		grid.setContainerDataSource(new BeanItemContainer(ElectricReading.class, repo.findByDateBetween(LocalDateTime.now().minusHours((long) endHours), LocalDateTime.now().minusHours((long)startHours))));
 	}
 	// end::listCustomers[]
 
