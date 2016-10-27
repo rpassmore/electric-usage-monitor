@@ -14,23 +14,23 @@ public class ElectricReading {
   @GeneratedValue
   private Long id;
 
+  private LocalDateTime date;
+
   private Double current;
 
   private Double voltage = 240d;
-
-  private LocalDateTime readingDate;
 
   public ElectricReading() {
   }
 
   public ElectricReading(Double current, LocalDateTime readingDate) {
     this.current = current;
-    this.readingDate = readingDate;
+    this.date = readingDate;
   }
 
   @Override
   public String toString() {
-    return String.format("%d current:%f power:%f time:%s", id, current, getPower(), readingDate.toString());
+    return String.format("%d current:%f power:%f time:%s", id, current, getPower(), date.toString());
   }
 
   public Long getId() {
@@ -58,11 +58,11 @@ public class ElectricReading {
   }
 
   public LocalDateTime getReadingDate() {
-    return readingDate;
+    return date;
   }
 
   public void setReadingDate(LocalDateTime readingDate) {
-    this.readingDate = readingDate;
+    this.date = readingDate;
   }
 
   public Double getPower() {
