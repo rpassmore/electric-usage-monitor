@@ -25,6 +25,6 @@ public class SyntheticElectricReaderImpl implements ElectricReader {
     ElectricReading electricReading = new ElectricReading(randomReading.nextDouble() * 100, LocalDateTime.now());
     repository.save(electricReading);
 
-    repository.deleteByReadingDateLessThan(LocalDateTime.now().minusDays(3));
+    repository.deleteByDateLessThan(LocalDateTime.now().minusDays(3));
   }
 }

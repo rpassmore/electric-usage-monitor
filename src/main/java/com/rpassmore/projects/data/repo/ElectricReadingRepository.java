@@ -16,9 +16,9 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "readings", path = "readings")
 @CrossOrigin
 public interface ElectricReadingRepository extends JpaRepository<ElectricReading, Long> {
-  List<ElectricReading> findByReadingDateBetween(LocalDateTime start, LocalDateTime end);
+  List<ElectricReading> findByDateBetween(LocalDateTime start, LocalDateTime end);
 
   @Transactional
-  List<ElectricReading> deleteByReadingDateLessThan(LocalDateTime before);
+  List<ElectricReading> deleteByDateLessThan(LocalDateTime before);
 
 }
