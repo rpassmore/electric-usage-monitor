@@ -18,6 +18,8 @@ import java.util.List;
 public interface ElectricReadingRepository extends JpaRepository<ElectricReading, Long> {
   List<ElectricReading> findByDateBetween(LocalDateTime start, LocalDateTime end);
 
+  ElectricReading findFirstByOrderByDateDesc();
+
   @Transactional
   List<ElectricReading> deleteByDateLessThan(LocalDateTime before);
 

@@ -57,11 +57,11 @@ public class ElectricReading {
     this.voltage = voltage;
   }
 
-  public LocalDateTime getReadingDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
-  public void setReadingDate(LocalDateTime readingDate) {
+  public void setDate(LocalDateTime readingDate) {
     this.date = readingDate;
   }
 
