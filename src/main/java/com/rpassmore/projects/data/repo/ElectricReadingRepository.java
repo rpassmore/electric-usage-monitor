@@ -18,6 +18,7 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "readings", path = "readings")
 @CrossOrigin
 public interface ElectricReadingRepository extends JpaRepository<ElectricReading, Long> {
+
   List<ElectricReading> findByDateBetween(@Param("start")
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
                                           @Param("end")
