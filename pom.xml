@@ -22,26 +22,6 @@
       <docker.image.prefix>rpassmore</docker.image.prefix>
     </properties>
 
-    <!-- tag::bom[] -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>7.6.8</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
-            <dependency>
-              <groupId>org.vaadin.addons</groupId>
-              <artifactId>dcharts-widget</artifactId>
-            <version>1.7.0</version>
-          </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <!-- end::bom[] -->
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -52,20 +32,9 @@
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
         
-        <!-- tag::starter[] -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <!-- end::starter[] -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.vaadin.addons</groupId>
-          <artifactId>dcharts-widget</artifactId>        
         </dependency>
     </dependencies>
 
